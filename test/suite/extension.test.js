@@ -32,7 +32,7 @@ suite('Test getEncodingFromLine', () => {
 
 suite('Test findXMLDeclaration', () => {
 	test('Simple test', () => {
-		var mock = vscodeMocks.createMockDoc([
+		var mock = vscodeMocks.createMockTextDocument([
 			`<?xml version="1.0" encoding="windows-1251"?>`
 		]);
 		var xmlDeclaration = extension.findXMLDeclaration(mock);
@@ -40,7 +40,7 @@ suite('Test findXMLDeclaration', () => {
 	});
 
 	test('Advanced test', () => {
-		var mock = vscodeMocks.createMockDoc([
+		var mock = vscodeMocks.createMockTextDocument([
 			`#include "../character_desc.xml"`,
 			``,
 			`<?xml encoding="windows-1251"?>`,
@@ -56,8 +56,17 @@ suite('Test findXMLDeclaration', () => {
 		assert.strictEqual(xmlDeclaration, `<?xml encoding="windows-1251"?>`);
 	});
 
+	test('Usage of whitespaces', () => {
+		var mock = vscodeMocks.createMockTextDocument([
+			`  <?xml version="1.0" encoding="windows-1251"?>`,
+			``
+		]);
+		var xmlDeclaration = extension.findXMLDeclaration(mock);
+		assert.strictEqual(xmlDeclaration, `  <?xml version="1.0" encoding="windows-1251"?>`);
+	});
+
 	test('Invalid XML declaration', () => {
-		var mock = vscodeMocks.createMockDoc([
+		var mock = vscodeMocks.createMockTextDocument([
 			`?xml encoding="windows-1251"?>`,
 			`<root>`,
 			`  <quote>50,000 People Used to Live Here. Now It's a Ghost Town</quote>`,
@@ -68,7 +77,7 @@ suite('Test findXMLDeclaration', () => {
 	});
 
 	test('Empty document', () => {
-		var mock = vscodeMocks.createMockDoc([]);
+		var mock = vscodeMocks.createMockTextDocument([]);
 		var xmlDeclaration = extension.findXMLDeclaration(mock);
 		assert.strictEqual(xmlDeclaration, null);
 	});
