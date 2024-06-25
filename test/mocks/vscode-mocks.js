@@ -16,7 +16,7 @@ const createMockTextLine = (text) => {
  * @param {String[]} lines
  * @returns {any}
  */
-const createMockDoc = (lines) => {
+const createMockTextDocument = (lines) => {
 	return {
         /**
          * @returns {number}
@@ -38,5 +38,5 @@ const createMockDoc = (lines) => {
 
 module.exports = {
     createMockTextLine,
-    createMockDoc
+    createMockTextDocument
 };
