@@ -20,7 +20,7 @@ function getEncodingFromLine(line) {
 function findXMLDeclaration(doc) {
 	for (var i = 0; i < doc.lineCount; i++) {
 		var line = doc.lineAt(i).text;
-		if (line.trim().toLowerCase().startsWith("<?xml")) {
+		if (line.trim().startsWith("<?xml")) {
 			return line;
 		}
 	}
