@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const encodings = require('./encodings');
 
 /**
  * @param {String} line
@@ -43,23 +44,26 @@ function activate(context) {
 			return;
 		}
 
-		var encoding = getEncodingFromLine(xmlDeclaration);
-		if (!encoding) {
+		var encDeclaration = getEncodingFromLine(xmlDeclaration);
+		if (!encDeclaration) {
 			console.log("XML tree doesn't contain an encoding instruction");
 			return;
 		}
 
-		console.log("Detected encoding: ", encoding);
-
-		/*
+		var encoding = encodings.ENCODINGS_MAP[encDeclaration.toLowerCase()];
+		if (!encoding) {
+			console.error(`${encDeclaration} isn't supported by VS Code`)
+			return;
+		}
+		
 		// Waiting for https://github.com/microsoft/vscode/pull/177434 :(
 
+		// @ts-ignore
 		vscode.window.activeTextEditor.setEncoding(encoding).then(() => {
 			console.log("Encoding set successfully");
 		}).catch(error => {
-			console.error("Error setting encoding: ", error.message);
+			console.error(`Error setting encoding: ${error.message}`);
 		});
-		*/
 	}));
 }
 
