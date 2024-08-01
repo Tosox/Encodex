@@ -1,4 +1,4 @@
-export const ENCODINGS_MAP = {
+const ENCODINGS_MAP = {
     ["utf-8"]: "utf8",
     ["utf-16le"]: "utf16le",
     ["utf-16be"]: "utf16be",
@@ -46,3 +46,7 @@ export const ENCODINGS_MAP = {
     // [""]: "cp865",
     // [""]: "cp860",
 };
+
+module.exports = {
+    ENCODINGS_MAP
+}
