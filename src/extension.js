@@ -28,63 +28,60 @@ function findXMLDeclaration(doc) {
 	return null;
 }
 
-const EncodingMode = {
-	Encode: 0,
-	Decode: 1
-};
-
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(document => {
-		if (document.languageId !== "xml") {
-			console.log("Document isn't XML");
-			return;
-		}
-
-		var xmlDeclaration = findXMLDeclaration(document);
-		if (!xmlDeclaration) {
-			console.log("Document doesn't contain a XML tree");
-			return;
-		}
-
-		var encDeclaration = getEncodingFromLine(xmlDeclaration);
-		if (!encDeclaration) {
-			console.log("XML tree doesn't contain an encoding instruction");
-			return;
-		}
-
-		var encoding = encodings.ENCODINGS_MAP[encDeclaration.toLowerCase()];
-		if (!encoding) {
-			console.error(`${encDeclaration} isn't supported by VS Code`);
-			return;
-		}
-
-		// Waiting for https://github.com/microsoft/vscode/pull/177434 :(
-
-		//@ts-ignore
-		vscode.window.activeTextEditor.getEncoding().then(currentEncoding => {
-			console.log(`Current encoding: ${currentEncoding}, encoding: ${encoding}`)
-			if (currentEncoding === encoding) {
-				console.log(`Encoding is already set to ${currentEncoding}`);
-				return;
-			}
-
-			//@ts-ignore
-			vscode.window.activeTextEditor.setEncoding(encoding, EncodingMode.Decode).then(() => {
-				console.log("Encoding set successfully");
-			}).catch(error => {
-				console.error(`Error setting encoding: ${error.message}`);
-			});
-		}).catch(error => {
-  			console.error(`Error setting encoding: ${error.message}`);
-		});
-	}));
+	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(handleDocumentChange));
 }
 
 function deactivate() {
-	
+	// Nothing to do
+}
+
+/**
+ * @param {vscode.TextEditor} editor
+ */
+function handleDocumentChange(editor) {
+	var document = editor.document;
+	if (!document) {
+		console.log("No document open");
+		return;
+	}
+
+	if (document.languageId !== "xml") {
+		console.log("Document isn't XML");
+		return;
+	}
+
+	var xmlDeclaration = findXMLDeclaration(document);
+	if (!xmlDeclaration) {
+		console.log("Document doesn't contain a XML tree");
+		return;
+	}
+
+	var encDeclaration = getEncodingFromLine(xmlDeclaration);
+	if (!encDeclaration) {
+		console.log("XML tree doesn't contain an encoding instruction");
+		return;
+	}
+
+	var encoding = encodings.ENCODINGS_MAP[encDeclaration.toLowerCase()];
+	if (!encoding) {
+		console.error(`${encDeclaration} isn't supported by VS Code`);
+		return;
+	}
+
+	if (document.encoding === encoding) {
+		console.log(`Encoding is already set to ${encoding}`);
+		return;
+	}
+
+	Promise.resolve(vscode.workspace.openTextDocument(document.uri, { encoding: encoding })).then(doc => {
+		console.log(`Changed encoding for ${doc.fileName.split("\\").pop()} to ${encoding}`);
+	}).catch(error => {
+		vscode.window.showErrorMessage(`Error setting encoding for ${document.fileName.split("\\").pop()}: ${error.message}`);
+	});
 }
 
 module.exports = {
