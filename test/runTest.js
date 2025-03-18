@@ -11,7 +11,14 @@ async function main() {
             extensionDevelopmentPath: path.resolve(__dirname, '../'),
             extensionTestsPath: path.resolve(__dirname, './suite/index'),
             launchArgs: [
-                '--disable-extensions' // Disables VS Code extensions
+                '--disable-gpu',          // Prevents GPU-related crashes
+                '--no-sandbox',           // Helps prevent sandboxing issues
+                '--disable-software-rasterizer', // Ensures rendering does not need a display
+                '--disable-crash-reporter', // Prevents Electron from generating crash reports
+                '--disable-dev-shm-usage',  // Fixes shared memory issues in CI
+                '--disable-extensions',    // Ensures VSCode runs cleanly
+                '--force-color-profile=srgb', // Ensures consistent colors without needing a display
+                '--headless'               // Forces Electron to run in headless mode (main change)
             ],
         });
     } catch (err) {
