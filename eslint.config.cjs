@@ -1,4 +1,4 @@
-export default [
+module.exports = [
 	{
 	  languageOptions: {
 		ecmaVersion: 2018,
@@ -17,4 +17,4 @@ export default [
 		"valid-typeof": "warn"
 	  }
 	}
-];
+  ];
