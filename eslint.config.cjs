@@ -7,10 +7,6 @@ module.exports = [
     linterOptions: {
       reportUnusedDisableDirectives: true
     },
-    environment: {
-      node: true,
-      mocha: true
-    },
     rules: {
       "no-const-assign": "warn",
       "no-this-before-super": "warn",
