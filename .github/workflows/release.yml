@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      build-ver:
+        description: Build version
+        required: true
+        default: v0.0.0
+      upload-to-marketplace:
+        description: Upload to marketplace
+        required: true
+        default: false
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+  release:
+    permissions: write-all
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    
+    if: ${{ github.ref_name == 'master' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: encodex
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.build-ver }}
+          release_name: Release ${{ github.event.inputs.build-ver }}
+          body_path: ./CHANGELOG.md
+          prerelease: false
+
+      - name: Upload Artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./encodex.vsix
+          asset_name: encodex-${{ github.event.inputs.build-ver }}.vsix
