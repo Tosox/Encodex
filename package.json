@@ -1,12 +1,12 @@
 {
-  "name": "encoding-switcher",
-  "displayName": "Encoding Switcher",
-  "description": "Automatically detect and switch the encoding of the file to edit",
+  "name": "encodex",
+  "displayName": "Encodex",
+  "description": "Automatically detect and switch the encoding of files across different formats.",
   "version": "0.0.1",
   "publisher": "Tosox",
   "license":"MIT",
   "engines": {
-    "vscode": "^1.81.0"
+    "vscode": "^1.98.0"
   },
   "enabledApiProposals": [
     "textDocumentEncoding"
@@ -15,26 +15,22 @@
     "Formatters",
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tosox/Encodex"
+  },
   "keywords": [
     "xml",
     "encoding",
-    "detect"
+    "auto-detect",
+    "file format",
+    "automatic encoding"
   ],
   "main": "./src/extension.js",
-  "contributes": {
-    "languages": [
-      {
-        "id": "xml",
-        "aliases": [
-          "Extensible Markup Language"
-        ],
-        "extensions": [
-          ".xml"
-        ],
-        "configuration": "./language-configuration.json"
-      }
-    ]
-  },
+  "activationEvents": [
+    "onLanguage:xml",
+    "workspaceContains:**/*.xml"
+  ],
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
