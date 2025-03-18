@@ -4,33 +4,41 @@
   "description": "Automatically detect and switch the encoding of files across different formats.",
   "version": "0.0.1",
   "publisher": "Tosox",
+  "author": {
+		"name": "Tosox",
+		"email": "tosoxdev@gmail.com"
+	},
+  "private": true,
   "license":"MIT",
-  "engines": {
-    "vscode": "^1.98.0"
-  },
-  "enabledApiProposals": [
-    "textDocumentEncoding"
-  ],
   "categories": [
-    "Formatters",
     "Other"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Tosox/Encodex"
-  },
   "keywords": [
     "xml",
     "encoding",
     "auto-detect",
     "file format",
-    "automatic encoding"
+    "automatic encoding",
+    "vscode"
   ],
-  "main": "./src/extension.js",
+  "main": "src/extension.js",
   "activationEvents": [
     "onLanguage:xml",
     "workspaceContains:**/*.xml"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tosox/Encodex"
+  },
+  "bugs": {
+		"url": "https://github.com/Tosox/Encodex/issues"
+	},
+  "homepage": "https://github.com/iCrawl/discord-vscode#readme",
+	"icon": "assets/icon.png",
+	"galleryBanner": {
+		"color": "#6477C1",
+		"theme": "dark"
+	},
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
@@ -45,5 +53,11 @@
     "mocha": "^11.1.0",
     "typescript": "^5.8.2",
     "@vscode/test-electron": "^2.4.1"
+  },
+  "enabledApiProposals": [
+    "textDocumentEncoding"
+  ],
+  "engines": {
+    "vscode": "^1.98.0"
   }
 }
