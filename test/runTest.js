@@ -9,7 +9,8 @@ async function main() {
             launchArgs: [
                 '--disable-gpu',          // Prevents GPU-related crashes
                 '--no-sandbox',           // Helps prevent sandboxing issues
-                '--disable-extensions'    // Ensures VSCode runs cleanly
+                '--disable-extensions',    // Ensures VSCode runs cleanly
+                '--enable-proposed-api=Tosox.encodex', // Enable proposed API
             ],
         });
     } catch (err) {
