@@ -10,10 +10,11 @@ async function main() {
                 '--disable-gpu', // Avoids GPU-related crashes
                 '--disable-software-rasterizer', // Reduces the need for a display
                 '--no-sandbox', // Prevents sandboxing issues
+                '--headless' // Forces VS Code to run in headless mode
             ],
         });
     } catch (err) {
-        console.error('Failed to run tests');
+        console.error('Failed to run tests: ', err);
         process.exit(1);
     }
 }
