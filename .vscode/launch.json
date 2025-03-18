@@ -10,7 +10,8 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--enable-proposed-api Tosox.encodex"
 			]
 		},
 		{
@@ -19,8 +20,7 @@
 			"request": "launch",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/test/suite/index",
-				"--enable-proposed-api Tosox.encoding-switcher"
+				"--extensionTestsPath=${workspaceFolder}/test/suite/index"
 			]
 		}
 	]
