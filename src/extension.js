@@ -2,26 +2,24 @@ const vscode = require('vscode');
 const encodings = require('./encodings');
 
 /**
- * @param {String} line
- * @returns {(String | null)}
+ * Extracts encoding from an XML declaration line
+ * @param {string} line - A line of text
+ * @returns {string | null} The extracted encoding or null if not found
  */
 function getEncodingFromLine(line) {
-	var matches = line.match(/<\?xml[^>]*encoding\s*=\s*"([^"]+)/);
-	if (!matches) {
-		return null;
-	}
-
-	return matches.at(1);
+	const match = line.match(/<\?xml\s+[^>]*?encoding\s*=\s*(['"])(.*?)\1/i);
+	return match ? match[2] : null;
 }
 
 /**
- * @param {vscode.TextDocument} doc
- * @returns {(String | null)}
+ * Finds the XML declaration in a document
+ * @param {vscode.TextDocument} doc - The document to search
+ * @returns {string | null} The XML declaration line, or null if not found
  */
 function findXMLDeclaration(doc) {
-	for (var i = 0; i < doc.lineCount; i++) {
-		var line = doc.lineAt(i).text;
-		if (line.trim().startsWith("<?xml")) {
+	for (let i = 0; i < doc.lineCount; i++) {
+		const line = doc.lineAt(i).text;
+		if (/^\s*<\?xml/i.test(line)) {
 			return line;
 		}
 	}
@@ -29,65 +27,72 @@ function findXMLDeclaration(doc) {
 }
 
 /**
- * @param {vscode.ExtensionContext} context
+ * This method is called when the extension is activated
+ * @param {vscode.ExtensionContext} context - The extension context
  */
 function activate(context) {
 	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(handleDocumentChange));
 }
 
+/**
+ * This method is called when the extension is deactivated
+ */
 function deactivate() {
-	// Nothing to do
+	// Clean up if necessary
 }
 
 /**
- * @param {vscode.TextEditor} editor
+ * Handles document change events
+ * @param {vscode.TextEditor | undefined} editor - The active text editor
  */
 function handleDocumentChange(editor) {
-	var document = editor.document;
-	if (!document) {
-		console.log("No document open");
-		return;
-	}
+	if (!editor) {
+        console.log("No active editor");
+        return;
+    }
 
+	const document = editor.document;
 	if (document.languageId !== "xml") {
-		console.log("Document isn't XML");
+		console.log("Active document isn't XML");
 		return;
 	}
 
-	var xmlDeclaration = findXMLDeclaration(document);
+	const xmlDeclaration = findXMLDeclaration(document);
 	if (!xmlDeclaration) {
-		console.log("Document doesn't contain a XML tree");
+		console.log("No XML declaration found");
 		return;
 	}
 
-	var encDeclaration = getEncodingFromLine(xmlDeclaration);
-	if (!encDeclaration) {
-		console.log("XML tree doesn't contain an encoding instruction");
+	const encodingDeclaration = getEncodingFromLine(xmlDeclaration);
+	if (!encodingDeclaration) {
+		console.log("XML declaration does not specify encoding");
 		return;
 	}
 
-	var encoding = encodings.ENCODINGS_MAP[encDeclaration.toLowerCase()];
+	const encoding = encodings.XML_ENCODINGS_MAP[encodingDeclaration.toLowerCase()];
 	if (!encoding) {
-		console.error(`${encDeclaration} isn't supported by VS Code`);
+		vscode.window.showErrorMessage(`${encodingDeclaration} encoding is not supported`);
 		return;
 	}
 
 	if (document.encoding === encoding) {
-		console.log(`Encoding is already set to ${encoding}`);
+		console.log(`Document encoding is already set to ${encoding}`);
 		return;
 	}
 
-	Promise.resolve(vscode.workspace.openTextDocument(document.uri, { encoding: encoding })).then(doc => {
-		console.log(`Changed encoding for ${doc.fileName.split("\\").pop()} to ${encoding}`);
-	}).catch(error => {
-		vscode.window.showErrorMessage(`Error setting encoding for ${document.fileName.split("\\").pop()}: ${error.message}`);
-	});
+	vscode.workspace.openTextDocument(document.uri, { encoding })
+        .then(
+            doc => console.log(`Changed encoding for ${doc.fileName.split('\\').pop()} to ${encoding}`),
+            error => vscode.window.showErrorMessage(`Error setting encoding for ${document.fileName.split('\\').pop()}: ${error.message}`)
+        );
 }
 
 module.exports = {
+	// Tests
 	getEncodingFromLine,
 	findXMLDeclaration,
 
+	// VS Code API
 	activate,
 	deactivate
 }

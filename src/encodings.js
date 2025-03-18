@@ -1,4 +1,4 @@
-const ENCODINGS_MAP = {
+const XML_ENCODINGS_MAP = {
     ["utf-8"]: "utf8",
     ["utf-16le"]: "utf16le",
     ["utf-16be"]: "utf16be",
@@ -48,5 +48,5 @@ const ENCODINGS_MAP = {
 };
 
 module.exports = {
-    ENCODINGS_MAP
+    XML_ENCODINGS_MAP
 }
