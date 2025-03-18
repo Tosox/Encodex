@@ -25,10 +25,15 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Start Virtual Display
+        run: Xvfb :99 -screen 0 1920x1080x24 &
+
       - name: Lint Code
         run: npm run lint
 
       - name: Run Tests
+        env:
+          DISPLAY: :99
         run: npm test
 
       - name: Install VSCE
