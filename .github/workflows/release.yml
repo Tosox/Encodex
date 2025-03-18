@@ -15,38 +15,37 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/build.yml
+
   release:
-    permissions: write-all
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs:
       - build
-    runs-on: ubuntu-latest
     
-    if: ${{ github.ref_name == 'master' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download artifact
-        uses: dawidd6/action-download-artifact@v6
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
           name: encodex
+          path: .
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@latest
+      - name: Rename Build Artifact
+        run: mv ./encodex.vsix encodex-${{ github.event.inputs.build-ver }}.vsix
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.event.inputs.build-ver }}
-          release_name: Release ${{ github.event.inputs.build-ver }}
-          body_path: ./CHANGELOG.md
+          name: Release ${{ github.event.inputs.build-ver }}
+          files: |
+            ./encodex-${{ github.event.inputs.build-ver }}.vsix
+          draft: false
           prerelease: false
-
-      - name: Upload Artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./encodex.vsix
-          asset_name: encodex-${{ github.event.inputs.build-ver }}.vsix
+          make_latest: true
+          body_path: ./CHANGELOG.md
