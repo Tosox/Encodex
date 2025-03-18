@@ -14,5 +14,5 @@ node_modules/
 .vscode/
 
 # Miscellaneous
-.eslintrc.json
+eslint.config.js
 jsconfig.json
