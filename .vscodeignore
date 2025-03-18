@@ -1,11 +1,18 @@
-.vscode/**
-.vscode-test/**
-test/**
-.gitignore
-.yarnrc
-**/jsconfig.json
-**/*.map
-**/.eslintrc.json
+# Test
+test/
 
-node_modules/**
-.git/**
+# Packages
+node_modules/
+
+# Git
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+
+# Miscellaneous
+.eslintrc.json
+jsconfig.json
